@@ -59,7 +59,7 @@ if (uri_string() != "") {
         <ol class="breadcrumb">
           <li class="breadcrumb-item"><a href="/"><i class="bi bi-house-fill"></i></a></li>
           <?php
-          if ($hlm != "Home") {
+          if ($hlm != "Home" && $hlm != "Dashboard") {
             ?>
             <li class="breadcrumb-item"><?= $hlm == "Manage_user" ? "Manajemen User" : $hlm ?></li>
             <?php

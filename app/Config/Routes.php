@@ -35,6 +35,8 @@ $routes->group('manage_user', ['filter' => 'auth'], function ($routes) {
     $routes->post('delete/(:any)', 'ManageUserController::delete/$1');
 });
 
+$routes->get('/dashboard', 'DashboardController::index', ['filter' => 'auth']);
+
 $routes->get('/', 'Home::index', ['filter' => 'auth']);
 $routes->get('/produk', 'ProdukController::index', ['filter' => 'auth']);
 
