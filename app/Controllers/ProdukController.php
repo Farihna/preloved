@@ -9,10 +9,11 @@ use Dompdf\Dompdf;
 class ProdukController extends BaseController
 {
     protected $product; 
-    protected $user_id;
+    protected $user;
 
     function __construct()
     {
+        $this->user = new UserModel();
         $this->product = new ProductModel();
     }
 
@@ -24,7 +25,10 @@ class ProdukController extends BaseController
             $data['id_user'] = $user_id;
             $data['product'] = $product;
         }else{
-            $product = $this->product->findAll();
+            $product = $this->product
+                    ->select('product.*, user.username') 
+                    ->join('user', 'user.id = product.id_user') 
+                    ->findAll();
             $data['product'] = $product;
         }
 
@@ -39,6 +43,7 @@ class ProdukController extends BaseController
         $dataForm = [
             'nama' => $this->request->getPost('nama'),
             'harga' => $this->request->getPost('harga'),
+            'deskripsi' => $this->request->getPost('deskripsi'),
             'status' => $this->request->getPost('status'),
             'id_user' => $user_id,
             'created_at' => date("Y-m-d H:i:s")
@@ -62,6 +67,7 @@ class ProdukController extends BaseController
         $dataForm = [
             'nama' => $this->request->getPost('nama'),
             'harga' => $this->request->getPost('harga'),
+            'deskripsi' => $this->request->getPost('deskripsi'),
             'status' => $this->request->getPost('status'),
             'updated_at' => date("Y-m-d H:i:s")
         ];
@@ -104,7 +110,7 @@ class ProdukController extends BaseController
         $product = $this->product->findAll();
 
             //pass data to file view
-        $html = view('v_produkPDF', ['product' => $product]);
+        $html = view('admin/v_produkPDF', ['product' => $product]);
 
             //set the pdf filename
         $filename = date('y-m-d-H-i-s') . '-produk';

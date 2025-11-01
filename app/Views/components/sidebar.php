@@ -13,9 +13,25 @@
   <li class="nav-item">
     <a class="nav-link <?php echo (uri_string() == 'produk') ? "" : "collapsed" ?>" href="produk">
       <i class="bi bi-receipt"></i>
-      <span>Produk Saya</span>
+      <span><?= session()->get('role') == 'admin' ? 'Manajemen Produk' : 'Produk Saya' ?></span>
     </a>
   </li>
+  
+  <?php if (session()->get('role') == 'admin'){ ?>
+  <li class="nav-item">
+    <a class="nav-link <?php echo (uri_string() == 'manage_user') ? "" : "collapsed" ?>" href="manage_user">
+      <i class="bi bi-file-earmark-person-fill"></i>
+      <span>Manajemen User</span>
+    </a>
+  </li>
+  <?php }else{ ?>
+  <li class="nav-item">
+    <a class="nav-link <?php echo (uri_string() == 'profile') ? "" : "collapsed" ?>" href="profile">
+      <i class="bi bi-file-earmark-person-fill"></i>
+      <span>Profil Saya</span>
+    </a>
+  </li>
+  <?php } ?>
 
 </ul>
 

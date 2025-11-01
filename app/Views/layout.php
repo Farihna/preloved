@@ -11,12 +11,12 @@ if (uri_string() != "") {
   <meta charset="utf-8">
   <meta content="width=device-width, initial-scale=1.0" name="viewport">
 
-  <title>- BekasDinus - <?php echo $hlm ?></title>
+  <title>- Preloved - <?php echo $hlm ?></title>
   <meta content="" name="description">
   <meta content="" name="keywords">
 
   <!-- Favicons -->
-  <link href="<?= base_url() ?>NiceAdmin/assets/img/favicon.png" rel="icon">
+  <link href="<?= base_url("img/logo-preloved-single.png") ?>" rel="icon">
   <link href="<?= base_url() ?>NiceAdmin/assets/img/apple-touch-icon.png" rel="apple-touch-icon">
 
   <!-- Google Fonts -->
@@ -55,20 +55,20 @@ if (uri_string() != "") {
   <main id="main" class="main">
 
     <div class="pagetitle">
-      <h1>Beranda</h1>
-      <nav>
+      <nav style="--bs-breadcrumb-divider: url(&#34;data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8'%3E%3Cpath d='M2.5 0L1 1.5 3.5 4 1 6.5 2.5 8l4-4-4-4z' fill='%236c757d'/%3E%3C/svg%3E&#34;);" aria-label="breadcrumb">
         <ol class="breadcrumb">
-          <li class="breadcrumb-item">Home</li>
+          <li class="breadcrumb-item"><a href="/"><i class="bi bi-house-fill"></i></a></li>
           <?php
           if ($hlm != "Home") {
             ?>
-            <li class="breadcrumb-item"><?php echo $hlm ?></li>
+            <li class="breadcrumb-item"><?= $hlm == "Manage_user" ? "Manajemen User" : $hlm ?></li>
             <?php
           }
           ?>
         </ol>
       </nav>
-    </div><!-- End Page Title -->
+    </div>
+    <!-- End Page Title -->
 
     <section class="section">
       <div class="row">
@@ -76,7 +76,7 @@ if (uri_string() != "") {
 
           <div class="card">
             <div class="card-body">
-              <h5 class="card-title"><?php echo $hlm ?></h5>
+              <h5 class="card-title"><?= $hlm == "Manage_user" ? "User" : $hlm ?></h5>
               <?= $this->renderSection('content') ?>
             </div>
           </div>

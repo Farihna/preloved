@@ -5,7 +5,7 @@
         <th>No</th>
         <th>Nama</th>
         <th>Harga</th>
-        <th>Jumlah</th>
+        <th>Deskripsi</th>
         <th>Foto</th>
     </tr>
 
@@ -22,7 +22,7 @@
             <td align="center"><?= $index + 1 ?></td>
             <td><?= $produk['nama'] ?></td>
             <td align="right"><?= "Rp " . number_format($produk['harga'], 2, ",", ".") ?></td>
-            <td align="center"><?= $produk['jumlah'] ?></td>
+            <td align="center"><?= $produk['deskripsi'] ?></td>
             <td align="center">
                 <img src="<?= $base64 ?>" width="50px">
             </td>

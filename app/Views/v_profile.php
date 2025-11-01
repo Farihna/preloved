@@ -1,77 +1,121 @@
 <?= $this->extend('layout') ?>
 <?= $this->section('content') ?>
-History Transaksi Pembelian <strong><?= $username ?></strong>
-<hr>
-<div class="table-responsive">
-    <!-- Table with stripped rows -->
-    <table class="table datatable">
-        <thead>
-            <tr>
-                <th scope="col">#</th>
-                <th scope="col">ID Pembelian</th>
-                <th scope="col">Waktu Pembelian</th>
-                <th scope="col">Total Bayar</th>
-                <th scope="col">Alamat</th>
-                <th scope="col">Status</th>
-                <th scope="col"></th>
-            </tr>
-        </thead>
-        <tbody>
-            <?php
-            if (!empty($buy)) :
-                foreach ($buy as $index => $item) :
-            ?>
-                    <tr>
-                        <th scope="row"><?php echo $index + 1 ?></th>
-                        <td><?php echo $item['id'] ?></td>
-                        <td><?php echo $item['created_at'] ?></td>
-                        <td><?php echo number_to_currency($item['total_harga'], 'IDR') ?></td>
-                        <td><?php echo $item['alamat'] ?></td>
-                        <td><?php echo ($item['status'] == "1") ? "Sudah Selesai" : "Belum Selesai" ?></td>
-                        <td>
-                            <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#detailModal-<?= $item['id'] ?>">
-                                Detail
-                            </button>
-                        </td>
-                    </tr>
-                    <!-- Detail Modal Begin -->
-                    <div class="modal fade" id="detailModal-<?= $item['id'] ?>" tabindex="-1">
-                        <div class="modal-dialog modal-dialog-centered">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h5 class="modal-title">Detail Data</h5>
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                </div>
-                                <div class="modal-body">
-                                    <?php 
-                                    if(!empty($product)){
-	                                    foreach ($product[$item['id']] as $index2 => $item2) : ?>
-	                                        <?php echo $index2 + 1 . ")" ?>
-	                                        <?php if ($item2['foto'] != '' and file_exists("img/" . $item2['foto'] . "")) : ?>
-	                                            <img src="<?php echo base_url() . "img/" . $item2['foto'] ?>" width="100px">
-	                                        <?php endif; ?>
-	                                        <strong><?= $item2['nama'] ?></strong>
-	                                        <?= number_to_currency($item2['harga'], 'IDR') ?>
-	                                        <br>
-	                                        <?= "(" . $item2['jumlah'] . " pcs)" ?><br>
-	                                        <?= number_to_currency($item2['subtotal_harga'], 'IDR') ?>
-	                                        <hr>
-	                                    <?php 
-	                                    endforeach; 
-                                    }
-                                    ?>
-                                    Ongkir <?= number_to_currency($item['ongkir'], 'IDR') ?>
-                                </div>
-                            </div>
+
+<div class="col-xl-8">
+    <?php $user = $profile; ?>
+
+            <div class="card">
+            <div class="card-body pt-3">
+                <!-- Bordered Tabs -->
+                <ul class="nav nav-tabs nav-tabs-bordered">
+
+                <li class="nav-item">
+                    <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#profile-overview">Overview</button>
+                </li>
+
+                <li class="nav-item">
+                    <button class="nav-link" data-bs-toggle="tab" data-bs-target="#profile-edit">Edit Profile</button>
+                </li>
+
+                <li class="nav-item">
+                    <button class="nav-link" data-bs-toggle="tab" data-bs-target="#profile-change-password">Change Password</button>
+                </li>
+
+                </ul>
+                <div class="tab-content pt-2">
+
+                <div class="tab-pane fade show active profile-overview" id="profile-overview">
+                    <h5 class="card-title">Profile Details</h5>
+
+                    <div class="row">
+                        <div class="col-lg-3 col-md-4 label ">Username</div>
+                        <div class="col-lg-9 col-md-8"><?= $user['username'] ?></div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-lg-3 col-md-4 label">Email</div>
+                        <div class="col-lg-9 col-md-8"><?= $user['email'] ?></div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-lg-3 col-md-4 label">Nomor HP</div>
+                        <div class="col-lg-9 col-md-8"><?= $user['hp'] ?></div>
+                    </div>
+                    
+
+                </div>
+
+                <div class="tab-pane fade profile-edit pt-3" id="profile-edit">
+
+                    <!-- Profile Edit Form -->
+                    <form action="<?= base_url('profile/edit/' . $profile['id']) ?>" method="post" enctype="multipart/form-data">
+                    <?= csrf_field(); ?>
+                    <div class="row mb-3">
+                        <label for="fullName" class="col-md-4 col-lg-3 col-form-label">Username</label>
+                        <div class="col-md-8 col-lg-9">
+                        <input name="username" type="text" class="form-control" id="username" value="<?= $profile['username'] ?>">
                         </div>
                     </div>
-                    <!-- Detail Modal End -->
-            <?php
-                endforeach;
-            endif;
-            ?>
-        </tbody>
-    </table>
-    <!-- End Table with stripped rows -->
+
+                    <div class="row mb-3">
+                        <label for="Phone" class="col-md-4 col-lg-3 col-form-label">No Hp</label>
+                        <div class="col-md-8 col-lg-9">
+                        <input name="hp" type="text" class="form-control" id="hp" value="<?= $profile['hp'] ?>">
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <label for="Email" class="col-md-4 col-lg-3 col-form-label">Email</label>
+                        <div class="col-md-8 col-lg-9">
+                        <input name="email" type="email" class="form-control" id="email" value="<?= $profile['email'] ?>">
+                        </div>
+                    </div>
+
+                    <div class="text-center">
+                        <button type="submit" class="btn btn-primary">Save Changes</button>
+                    </div>
+                    </form><!-- End Profile Edit Form -->
+
+                </div>
+
+                <div class="tab-pane fade pt-3" id="profile-change-password">
+                    <!-- Change Password Form -->
+                    <form>
+
+                    <div class="row mb-3">
+                        <label for="currentPassword" class="col-md-4 col-lg-3 col-form-label">Current Password</label>
+                        <div class="col-md-8 col-lg-9">
+                        <input name="password" type="password" class="form-control" id="currentPassword">
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <label for="newPassword" class="col-md-4 col-lg-3 col-form-label">New Password</label>
+                        <div class="col-md-8 col-lg-9">
+                        <input name="newpassword" type="password" class="form-control" id="newPassword">
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <label for="renewPassword" class="col-md-4 col-lg-3 col-form-label">Re-enter New Password</label>
+                        <div class="col-md-8 col-lg-9">
+                        <input name="renewpassword" type="password" class="form-control" id="renewPassword">
+                        </div>
+                    </div>
+
+                    <div class="text-center">
+                        <button type="submit" class="btn btn-primary">Change Password</button>
+                    </div>
+                    </form><!-- End Change Password Form -->
+
+                </div>
+
+                </div><!-- End Bordered Tabs -->
+
+            </div>
+            </div>
+
+        </div>
 </div>
+
 <?= $this->endSection() ?>

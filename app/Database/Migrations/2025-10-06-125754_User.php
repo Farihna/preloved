@@ -26,6 +26,11 @@ class User extends Migration
                 'null' => FALSE,
                 'unique' => TRUE,
             ],
+            'img_profile' => [
+                'type' => 'VARCHAR',
+                'constraint' => 255,
+                'null' => TRUE,
+            ],
             'hp' => [
                 'type' => 'VARCHAR',
                 'constraint' => 255,

@@ -29,6 +29,10 @@ class Product extends Migration
                 'type' => 'DOUBLE',
                 'null' => FALSE,
             ],
+            'deskripsi' => [
+                'type' => 'TEXT',
+                'null' => TRUE,
+            ],
             'status' => [
                 'type' => 'BOOLEAN',
                 'default' => 0,

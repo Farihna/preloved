@@ -1,4 +1,4 @@
-<?= $this->extend('layout_clear') ?>
+<?= $this->extend('/auth/layout_clear') ?>
 <?= $this->section('content') ?>
 
 <?php
@@ -23,8 +23,7 @@ $password = [
         <!-- Logo -->
         <div class="d-flex justify-content-center py-4">
           <a href="index.html" class="logo d-flex align-items-center w-auto">
-            <img src="<?php echo base_url() ?>NiceAdmin/assets/img/logo.png" alt="">
-            <span class="d-none d-lg-block">BekasDinus</span>
+            <img src="<?php echo base_url('img/logo_preloved_dark.png') ?>" alt="">
           </a>
         </div>
         <!-- End Logo -->

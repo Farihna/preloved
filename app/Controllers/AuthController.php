@@ -34,6 +34,7 @@ class AuthController extends BaseController
                         session()->set([
                             'username' => $dataUser['username'],
                             'user_id' => $dataUser['id'],
+                            'hp' => $dataUser['hp'],
                             'role' => $dataUser['role'],
                             'isLoggedIn' => TRUE
                         ]);
@@ -53,7 +54,7 @@ class AuthController extends BaseController
             }
         }
 
-        return view('v_login');
+        return view('auth/v_login');
     }
 
     public function register()
@@ -86,7 +87,7 @@ class AuthController extends BaseController
             }
         }
 
-        return view('v_register');
+        return view('auth/v_register');
     }
 
     public function logout()

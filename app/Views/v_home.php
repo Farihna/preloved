@@ -24,17 +24,13 @@ if (session()->getFlashData('success')) {
                 <div class="card-body">
                     <img src="<?php echo base_url() . "img/" . $item['foto'] ?>" alt="..." width="300px">
                     <h5 class="card-title"><?php echo $item['nama'] ?><br><?php echo number_to_currency($item['harga'], 'IDR') ?></h5>
+                    <p><?php echo $item['deskripsi'] ?></p>
                     <div class="container">
                         <div class="row">
-                            <?php if($item['status'] == 1) {?>
-                                <div class="col"><span class="badge bg-success fs-6 ms-auto"><?= $item['status'] == 1 ? 'Available' : 'Not Available' ?></span></div>
-                            <?php }else{?>
-                                <div class="col"><span class="badge bg-danger fs-6 ms-auto"><?= $item['status'] == 1 ? 'Available' : 'Not Available' ?></span></div>
-                            <?php } ?>
-
+                            <div class="col"><span class="badge bg-danger fs-6 ms-auto"><?= $item['status'] == 0 ? 'Sold' : '' ?></span></div>
                         </div>
                         <div class="row">
-                            <div class="col  mt-5"><a class="btn btn-outline-primary" href="https://wa.me/">Hubungi Penjual</a></div>
+                            <div class="col  mt-5"><a class="btn btn-outline-primary" href="https://wa.me/+62<?= session()->get('hp'); ?>?text=Halo!%20Saya%20ingin%20beli">Hubungi Penjual</a></div>
                         </div>
                     </div>
                 </div>

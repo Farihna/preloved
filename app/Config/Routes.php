@@ -1,5 +1,6 @@
 <?php
 
+use App\Controllers\ManageUserController;
 use CodeIgniter\Router\RouteCollection;
 
 /**
@@ -21,6 +22,18 @@ $routes->group('produk', ['filter' => 'auth'], function ($routes) {
     $routes->get('download', 'ProdukController::download');
 });
 
+$routes->group('profile', ['filter' => 'auth'], function ($routes) {
+    $routes->get('', 'ProfileController::index');
+    $routes->post('', 'ProfileController::create');
+    $routes->post('edit/(:any)', 'ProfileController::edit/$1');
+
+});
+
+$routes->group('manage_user', ['filter' => 'auth'], function ($routes) {
+    $routes->get('', 'ManageUserController::index');
+    $routes->post('edit/(:any)', 'ManageUserController::edit/$1');
+    $routes->post('delete/(:any)', 'ManageUserController::delete/$1');
+});
 
 $routes->get('/', 'Home::index', ['filter' => 'auth']);
 $routes->get('/produk', 'ProdukController::index', ['filter' => 'auth']);
