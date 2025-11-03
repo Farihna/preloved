@@ -36,7 +36,8 @@ class AuthController extends BaseController
                             'user_id' => $dataUser['id'],
                             'hp' => $dataUser['hp'],
                             'role' => $dataUser['role'],
-                            'isLoggedIn' => TRUE
+                            'isLoggedIn' => TRUE,
+                            'img_profile' => $dataUser['img_profile'] ?? 'no_profile.jpg'
                         ]);
 
                         return redirect()->to(base_url('/'));

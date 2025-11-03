@@ -9,47 +9,86 @@ use CodeIgniter\HTTP\ResponseInterface;
 
 class ProfileController extends BaseController
 {
-    protected $userModel; // Ganti $user_id menjadi $userModel
+    protected $userModel;
 
     function __construct(){
-        $this->userModel = new UserModel(); // Instansiasi UserModel
+        $this->userModel = new UserModel(); 
     }
 
     public function index()
     {
-        // Ambil ID user dari session
         $user_id = session()->get('user_id');
 
-        // Cari data user berdasarkan ID
         $profileData = $this->userModel->find($user_id);
         
-        // Cek apakah data user ditemukan
         if (!$profileData) {
-            // Jika user tidak ditemukan, Anda bisa mengarahkan ke halaman error atau login
             return redirect()->to('/login')->with('error', 'User not found.');
         }
 
-        // Siapkan data untuk dikirim ke view
-        $data['profile'] = $profileData; // Kirim satu baris data user, bukan array of users
+        session()->set([
+            'img_profile' => $profileData['img_profile'] ?? 'no_profile.jpg',
+            'username'    => $profileData['username'],
+        ]);
+
+        $data['profile'] = $profileData;
         
-        // Debugging: echo "<pre>"; print_r($data); echo "</pre>";
 
         return view('v_profile', $data);
     }
 
     public function edit($id)
     {
-        $dataUser = $this->userModel->find($id);
+        $userData = $this->userModel->find($id);
 
-        $dataForm = [
-            'username' => $this->request->getPost('username'),
-            'hp' => $this->request->getPost('hp'),
-            'email' => $this->request->getPost('email'),
+        if (!$userData) {
+            return redirect()->to('/profile')->with('error', 'Data pengguna tidak ditemukan.');
+        }
+
+        $dataUpdate = [
+            'username'   => $this->request->getPost('username'),
+            'hp'         => $this->request->getPost('hp'),
+            'email'      => $this->request->getPost('email'),
             'updated_at' => date("Y-m-d H:i:s")
         ];
 
-        $this->userModel->update($id, $dataForm);
+        if ($this->request->getPost('check') == 1) {
+            
+            $fileFoto = $this->request->getFile('img_profile');
+            
+            $fotoLama = $userData['img_profile'] ?? 'no_profile.jpg';
 
-        return redirect('profile')->with('success', 'Data Berhasil Diubah');
+            if ($fileFoto->isValid() && ! $fileFoto->hasMoved()) {
+
+                if ($fotoLama != 'no_profile.jpg' && file_exists("img/" . $fotoLama)) {
+                    unlink("img/" . $fotoLama);
+                }
+
+                $namaFileBaru = $fileFoto->getRandomName();
+                $fileFoto->move('img', $namaFileBaru);
+
+                $dataUpdate['img_profile'] = $namaFileBaru;
+            } 
+            else {
+                 $dataUpdate['img_profile'] = $fotoLama;
+            }
+
+            $this->userModel->update($id, $dataUpdate);
+
+            $updatedUserData = $this->userModel->find($id);
+
+            if ($updatedUserData) {
+             session()->set([
+                'img_profile' => $updatedUserData['img_profile'] ?? 'no_profile.jpg', 
+                'username'    => $updatedUserData['username'], 
+                'hp'          => $updatedUserData['hp'],
+            ]);
+            }
+
+            // Redirect ke halaman profile dengan pesan sukses
+            return redirect()->to('/profile')->with('success', 'Profile berhasil diperbarui!');
+        }
+        
+        // Jika tidak ada 'check' == 1 (error atau request tidak sesuai), redirect
+        return redirect()->to('/profile')->with('error', 'Gagal memperbarui profile.');
     }
 }

@@ -2,6 +2,8 @@
 
 namespace App\Controllers;
 
+use App\Models\UserModel;
+
 use CodeIgniter\Controller;
 use CodeIgniter\HTTP\CLIRequest;
 use CodeIgniter\HTTP\IncomingRequest;
@@ -21,6 +23,8 @@ use Psr\Log\LoggerInterface;
  */
 abstract class BaseController extends Controller
 {
+
+    protected $profile = null;
     /**
      * Instance of the main Request object.
      *
@@ -51,8 +55,18 @@ abstract class BaseController extends Controller
         // Do Not Edit This Line
         parent::initController($request, $response, $logger);
 
-        // Preload any models, libraries, etc, here.
 
-        // E.g.: $this->session = service('session');
+        $this->userModel = new UserModel();
+
+        $userId = session()->get('id_user');
+
+        if ($userId) {
+            $this->userData = $this->userModel->find($userId);
+            view()->setVar('userData', $this->userData);
+        }
+    // Preload any models, libraries, etc, here.
+
+    // E.g.: $this->session = service('session');
+
     }
 }

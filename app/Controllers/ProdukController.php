@@ -32,6 +32,13 @@ class ProdukController extends BaseController
             $data['product'] = $product;
         }
 
+        $user_id = session()->get('user_id');
+        if ($user_id) {
+            $data['user_profile'] = $this->user->find($user_id);
+        } else {
+            $data['user_profile'] = ['img_profile' => 'no_profil.jpg', 'username' => 'Guest'];
+        }
+
         return view('v_produk', $data);
     }
 

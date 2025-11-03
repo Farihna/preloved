@@ -30,7 +30,7 @@ if (session()->getFlashData('success')) {
                             <div class="col"><span class="badge bg-danger fs-6 ms-auto"><?= $item['status'] == 0 ? 'Sold' : '' ?></span></div>
                         </div>
                         <div class="row">
-                            <div class="col  mt-5"><a class="btn btn-outline-primary" href="https://wa.me/+62<?= session()->get('hp'); ?>?text=Halo!%20Saya%20ingin%20beli">Hubungi Penjual</a></div>
+                            <div class="col  mt-5"><a class="btn btn-outline-primary" href="https://wa.me/+62<?= session()->get('hp'); ?>?text=Halo!%20Saya%20ingin%20beli" target="_blank" rel="noopener noreferrer">Hubungi Penjual</a></div>
                         </div>
                     </div>
                 </div>

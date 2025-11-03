@@ -50,9 +50,16 @@
     <li class="nav-item dropdown pe-3">
 
       <a class="nav-link nav-profile d-flex align-items-center pe-0" href="#" data-bs-toggle="dropdown">
-        <img src="<?php echo base_url('img/no-profile-picture.png'); ?>" alt="Profile" class="rounded-pill">
+        
+        <?php
+        $user_img = session()->get('img_profile') ?? 'no_profile.jpg'; 
+        ?>
+        <img src="<?= base_url('img/' . $user_img) ?>" 
+             alt="Profile" 
+             class="rounded-circle" 
+             style="width: 36px; height: 36px; object-fit: cover;">
         <span class="d-none d-md-block dropdown-toggle ps-2 text-light"><?= session()->get('username');?></span>
-      </a><!-- End Profile Iamge Icon -->
+    </a><!-- End Profile Iamge Icon -->
 
       <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile">
         <li class="dropdown-header">
