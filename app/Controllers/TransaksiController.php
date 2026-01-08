@@ -37,7 +37,7 @@ class TransaksiController extends BaseController
      */
     public function checkout($productId)
     {
-        if (!session()->get('logged_in')) {
+        if (!session()->get('isLoggedIn')) {
             session()->setFlashdata('failed', 'Please login first');
             return redirect()->to('/login');
         }
@@ -106,7 +106,7 @@ class TransaksiController extends BaseController
             'addresses' => $addresses
         ];
         
-        return view('user/v_checkout', $data);
+        return view('v_checkout', $data);
     }
     
     /**
@@ -115,7 +115,7 @@ class TransaksiController extends BaseController
      */
     public function process()
     {
-        if (!session()->get('logged_in')) {
+        if (!session()->get('isLoggedIn')) {
             return $this->response->setJSON([
                 'success' => false,
                 'message' => 'Please login first'
@@ -217,7 +217,7 @@ class TransaksiController extends BaseController
      */
     public function myOrders()
     {
-        if (!session()->get('logged_in')) {
+        if (!session()->get('isLoggedIn')) {
             return redirect()->to('/login');
         }
         
@@ -229,7 +229,7 @@ class TransaksiController extends BaseController
             'activeTab' => $status ?? 'all'
         ];
         
-        return view('user/v_my_orders', $data);
+        return view('v_my_orders', $data);
     }
     
     /**
@@ -238,7 +238,7 @@ class TransaksiController extends BaseController
      */
     public function detail($id)
     {
-        if (!session()->get('logged_in')) {
+        if (!session()->get('isLoggedIn')) {
             return redirect()->to('/login');
         }
         
@@ -261,7 +261,7 @@ class TransaksiController extends BaseController
             'isBuyer' => ($transaction['buyer_id'] == $userId)
         ];
         
-        return view('user/v_transaction_detail', $data);
+        return view('v_transaction_detail', $data);
     }
     
     /**
@@ -270,7 +270,7 @@ class TransaksiController extends BaseController
      */
     public function uploadPaymentProof()
     {
-        if (!session()->get('logged_in')) {
+        if (!session()->get('isLoggedIn')) {
             return $this->response->setJSON([
                 'success' => false,
                 'message' => 'Please login first'
@@ -346,7 +346,7 @@ class TransaksiController extends BaseController
      */
     public function cancel($id)
     {
-        if (!session()->get('logged_in')) {
+        if (!session()->get('isLoggedIn')) {
             session()->setFlashdata('failed', 'Please login first');
             return redirect()->to('/login');
         }
@@ -388,7 +388,7 @@ class TransaksiController extends BaseController
      */
     public function mySales()
     {
-        if (!session()->get('logged_in')) {
+        if (!session()->get('isLoggedIn')) {
             return redirect()->to('/login');
         }
         
@@ -403,7 +403,7 @@ class TransaksiController extends BaseController
                                                        ->countAllResults()
         ];
         
-        return view('user/v_my_sales', $data);
+        return view('v_my_sales', $data);
     }
     
     /**
@@ -412,7 +412,7 @@ class TransaksiController extends BaseController
      */
     public function confirmPayment($id)
     {
-        if (!session()->get('logged_in')) {
+        if (!session()->get('isLoggedIn')) {
             session()->setFlashdata('failed', 'Please login first');
             return redirect()->to('/login');
         }
@@ -447,7 +447,7 @@ class TransaksiController extends BaseController
      */
     public function inputResi()
     {
-        if (!session()->get('logged_in')) {
+        if (!session()->get('isLoggedIn')) {
             return $this->response->setJSON([
                 'success' => false,
                 'message' => 'Please login first'
@@ -503,7 +503,7 @@ class TransaksiController extends BaseController
      */
     public function complete($id)
     {
-        if (!session()->get('logged_in')) {
+        if (!session()->get('isLoggedIn')) {
             session()->setFlashdata('failed', 'Please login first');
             return redirect()->to('/login');
         }

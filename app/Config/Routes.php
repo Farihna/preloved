@@ -46,19 +46,21 @@ $routes->group('', ['filter' => 'auth'], function($routes) {
         // Sisi Pembeli
         $routes->post('create', 'NegotiationController::create');
         $routes->get('my-offers', 'NegotiationController::myOffers');
+        $routes->post('counter-offer', 'NegotiationController::counterOffer');
         // Sisi Penjual
         $routes->get('requests', 'NegotiationController::requests');
+        $routes->post('counter/(:num)', 'NegotiationController::counter/$1');
         $routes->post('accept/(:num)', 'NegotiationController::accept/$1');
         $routes->post('reject/(:num)', 'NegotiationController::reject/$1');
     });
 
     // --- TRANSACTION (Proses Jual Beli) ---
     $routes->group('transaction', function($routes) {
-        $routes->get('checkout/(:num)', 'TransactionController::checkout/$1');
-        $routes->post('process', 'TransactionController::process');
-        $routes->get('my-orders', 'TransactionController::myOrders'); // Pembeli
-        $routes->get('my-sales', 'TransactionController::mySales');   // Penjual
-        $routes->post('payment-proof', 'TransactionController::uploadPaymentProof');
+        $routes->get('checkout/(:num)', 'TransaksiController::checkout/$1');
+        $routes->post('process', 'TransaksiController::process');
+        $routes->get('my-orders', 'TransaksiController::myOrders'); // Pembeli
+        $routes->get('my-sales', 'TransaksiController::mySales');   // Penjual
+        $routes->post('payment-proof', 'TransaksiController::uploadPaymentProof');
     });
 
     // --- ADMIN ONLY (Manage User) ---

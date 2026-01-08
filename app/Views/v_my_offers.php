@@ -1,242 +1,6 @@
 <?= $this->extend('layout_user') ?>
 <?= $this->section('content') ?>
 
-<style>
-    .offers-container {
-        max-width: 1200px;
-        margin: 0 auto;
-    }
-    
-    .nego-card {
-        background: white;
-        border-radius: 16px;
-        padding: 24px;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-        margin-bottom: 16px;
-        transition: all 0.3s ease;
-    }
-    
-    .nego-card:hover {
-        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
-    }
-    
-    .nego-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 20px;
-        padding-bottom: 16px;
-        border-bottom: 2px solid #f1f5f9;
-    }
-    
-    .nego-date {
-        font-size: 13px;
-        color: #64748b;
-    }
-    
-    .nego-status-badge {
-        padding: 8px 16px;
-        border-radius: 50px;
-        font-size: 13px;
-        font-weight: 600;
-    }
-    
-    .status-nego-pending {
-        background: #fef3c7;
-        color: #92400e;
-    }
-    
-    .status-nego-accepted {
-        background: #d1fae5;
-        color: #065f46;
-    }
-    
-    .status-nego-countered {
-        background: #dbeafe;
-        color: #1e40af;
-    }
-    
-    .status-nego-rejected {
-        background: #fee2e2;
-        color: #991b1b;
-    }
-    
-    .nego-body {
-        display: grid;
-        grid-template-columns: 120px 1fr;
-        gap: 20px;
-        margin-bottom: 20px;
-    }
-    
-    .nego-product-image {
-        width: 120px;
-        height: 120px;
-        border-radius: 12px;
-        object-fit: cover;
-    }
-    
-    .nego-info {
-        display: flex;
-        flex-direction: column;
-        gap: 12px;
-    }
-    
-    .nego-product-name {
-        font-size: 20px;
-        font-weight: 700;
-        color: #1e293b;
-    }
-    
-    .nego-seller {
-        font-size: 14px;
-        color: #64748b;
-        display: flex;
-        align-items: center;
-        gap: 6px;
-    }
-    
-    .nego-prices {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-        gap: 16px;
-        background: #f8fafc;
-        padding: 16px;
-        border-radius: 12px;
-    }
-    
-    .price-item {
-        display: flex;
-        flex-direction: column;
-        gap: 4px;
-    }
-    
-    .price-label {
-        font-size: 13px;
-        color: #64748b;
-        font-weight: 600;
-    }
-    
-    .price-value {
-        font-size: 18px;
-        font-weight: 700;
-        color: #1e293b;
-    }
-    
-    .price-value.highlight {
-        color: #667eea;
-        font-size: 22px;
-    }
-    
-    .price-value.success {
-        color: #10b981;
-    }
-    
-    .nego-messages {
-        background: #fef3c7;
-        padding: 16px;
-        border-radius: 12px;
-        margin-top: 16px;
-        border-left: 4px solid #f59e0b;
-    }
-    
-    .nego-messages.accepted {
-        background: #d1fae5;
-        border-left-color: #10b981;
-    }
-    
-    .nego-messages.rejected {
-        background: #fee2e2;
-        border-left-color: #ef4444;
-    }
-    
-    .message-label {
-        font-size: 13px;
-        font-weight: 700;
-        color: #1e293b;
-        margin-bottom: 6px;
-    }
-    
-    .message-text {
-        font-size: 14px;
-        color: #475569;
-        line-height: 1.6;
-    }
-    
-    .nego-footer {
-        display: flex;
-        justify-content: flex-end;
-        gap: 12px;
-        padding-top: 16px;
-        border-top: 2px solid #f1f5f9;
-    }
-    
-    .btn-nego-action {
-        padding: 12px 24px;
-        border-radius: 10px;
-        font-weight: 600;
-        font-size: 14px;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        text-decoration: none;
-        display: inline-flex;
-        align-items: center;
-        gap: 8px;
-        border: none;
-    }
-    
-    .btn-checkout-nego {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        color: white;
-    }
-    
-    .btn-checkout-nego:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
-        color: white;
-    }
-    
-    .btn-counter-nego {
-        background: white;
-        color: #667eea;
-        border: 2px solid #667eea;
-    }
-    
-    .btn-counter-nego:hover {
-        background: #667eea;
-        color: white;
-    }
-    
-    .nego-count-badge {
-        display: inline-block;
-        padding: 4px 10px;
-        background: #667eea;
-        color: white;
-        border-radius: 50px;
-        font-size: 11px;
-        font-weight: 700;
-        margin-left: 8px;
-    }
-    
-    @media (max-width: 768px) {
-        .nego-body {
-            grid-template-columns: 1fr;
-        }
-        
-        .nego-prices {
-            grid-template-columns: 1fr;
-        }
-        
-        .nego-footer {
-            flex-direction: column;
-        }
-        
-        .btn-nego-action {
-            width: 100%;
-            justify-content: center;
-        }
-    }
-</style>
-
 <div class="offers-container">
     <div class="page-header-orders">
         <h1>Tawaran Saya</h1>
@@ -425,8 +189,12 @@
                             <div class="form-group-custom" style="margin-bottom: 20px;">
                                 <label class="form-label-custom">Tawaran Baru Anda</label>
                                 <input type="number" id="newOffer<?= $nego['id'] ?>" class="nego-offer-input" 
-                                       placeholder="Masukkan tawaran baru" 
-                                       max="<?= $nego['counter_price'] - 1000 ?>">
+                                    placeholder="Masukkan tawaran baru" 
+                                    min="<?= $nego['offer_price'] + 1000 ?>" 
+                                    max="<?= $nego['counter_price'] - 1000 ?>">
+                                <small style="color: #64748b; font-size: 12px;">
+                                    Harus antara Rp <?= number_format($nego['offer_price'], 0, ',', '.') ?> dan Rp <?= number_format($nego['counter_price'], 0, ',', '.') ?>
+                                </small>
                             </div>
                             
                             <div class="form-group-custom">
@@ -452,11 +220,23 @@
 
 <script>
 function submitCounterOffer(negoId) {
-    const newOffer = document.getElementById('newOffer' + negoId).value;
-    const message = document.getElementById('newMessage' + negoId).value;
+    const inputOffer = document.getElementById('newOffer' + negoId);
+    const newOffer   = inputOffer.value;
+    const message    = document.getElementById('newMessage' + negoId).value;
     
+    // Validasi Sederhana
     if (!newOffer || newOffer <= 0) {
         alert('Tawaran baru harus diisi!');
+        return;
+    }
+
+    // Validasi Range Harga (Sesuai atribut min/max input)
+    if (parseInt(newOffer) <= parseInt(inputOffer.min) || parseInt(newOffer) >= parseInt(inputOffer.max)) {
+        alert('Harga tawaran harus lebih tinggi dari tawaran lama Anda dan lebih rendah dari harga penjual.');
+        return;
+    }
+    
+    if (!confirm('Kirim tawaran baru sebesar Rp ' + parseInt(newOffer).toLocaleString('id-ID') + '?')) {
         return;
     }
     
@@ -464,6 +244,7 @@ function submitCounterOffer(negoId) {
         method: 'POST',
         headers: {
             'Content-Type': 'application/x-www-form-urlencoded',
+            'X-Requested-With': 'XMLHttpRequest' // Tambahkan ini untuk security CI4
         },
         body: new URLSearchParams({
             nego_id: negoId,
@@ -482,7 +263,7 @@ function submitCounterOffer(negoId) {
     })
     .catch(error => {
         console.error('Error:', error);
-        alert('Terjadi kesalahan. Silakan coba lagi.');
+        alert('Terjadi kesalahan koneksi. Silakan coba lagi.');
     });
 }
 </script>

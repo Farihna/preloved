@@ -29,7 +29,7 @@ class NegotiationController extends BaseController
     public function create()
     {
         // Check login
-        if (!session()->get('logged_in')) {
+        if (!session()->get('isLoggedIn')) {
             return $this->response->setJSON([
                 'success' => false,
                 'message' => 'Please login first'
@@ -139,7 +139,7 @@ class NegotiationController extends BaseController
      */
     public function myOffers()
     {
-        if (!session()->get('logged_in')) {
+        if (!session()->get('isLoggedIn')) {
             return redirect()->to('/login');
         }
         
@@ -151,7 +151,7 @@ class NegotiationController extends BaseController
             'activeTab' => $status ?? 'all'
         ];
         
-        return view('user/v_my_offers', $data);
+        return view('v_my_offers', $data);
     }
     
     /**
@@ -160,7 +160,7 @@ class NegotiationController extends BaseController
      */
     public function counterOffer()
     {
-        if (!session()->get('logged_in')) {
+        if (!session()->get('isLoggedIn')) {
             return $this->response->setJSON([
                 'success' => false,
                 'message' => 'Please login first'
@@ -237,7 +237,7 @@ class NegotiationController extends BaseController
      */
     public function requests()
     {
-        if (!session()->get('logged_in')) {
+        if (!session()->get('isLoggedIn')) {
             return redirect()->to('/login');
         }
         
@@ -252,7 +252,7 @@ class NegotiationController extends BaseController
                                                      ->countAllResults()
         ];
         
-        return view('user/v_nego_requests', $data);
+        return view('v_nego_requests', $data);
     }
     
     /**
@@ -261,7 +261,7 @@ class NegotiationController extends BaseController
      */
     public function accept($id)
     {
-        if (!session()->get('logged_in')) {
+        if (!session()->get('isLoggedIn')) {
             session()->setFlashdata('failed', 'Please login first');
             return redirect()->to('/login');
         }
@@ -299,7 +299,7 @@ class NegotiationController extends BaseController
      */
     public function counter($id)
     {
-        if (!session()->get('logged_in')) {
+        if (!session()->get('isLoggedIn')) {
             session()->setFlashdata('failed', 'Please login first');
             return redirect()->to('/login');
         }

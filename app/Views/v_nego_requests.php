@@ -1,81 +1,6 @@
 <?= $this->extend('layout_user') ?>
 <?= $this->section('content') ?>
 
-<style>
-    .requests-badge {
-        display: inline-block;
-        padding: 6px 14px;
-        background: #ef4444;
-        color: white;
-        border-radius: 50px;
-        font-size: 13px;
-        font-weight: 700;
-        margin-left: 12px;
-    }
-    
-    .buyer-info-section {
-        background: #f8fafc;
-        padding: 16px;
-        border-radius: 12px;
-        margin-bottom: 16px;
-    }
-    
-    .buyer-info-header {
-        font-size: 14px;
-        font-weight: 700;
-        color: #1e293b;
-        margin-bottom: 12px;
-        display: flex;
-        align-items: center;
-        gap: 8px;
-    }
-    
-    .buyer-detail {
-        font-size: 14px;
-        color: #64748b;
-        line-height: 1.8;
-    }
-    
-    .action-group {
-        display: flex;
-        gap: 12px;
-    }
-    
-    .btn-accept {
-        background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-        color: white;
-        border: none;
-    }
-    
-    .btn-accept:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 8px 20px rgba(16, 185, 129, 0.3);
-        color: white;
-    }
-    
-    .btn-counter {
-        background: white;
-        color: #3b82f6;
-        border: 2px solid #3b82f6;
-    }
-    
-    .btn-counter:hover {
-        background: #3b82f6;
-        color: white;
-    }
-    
-    .btn-reject {
-        background: white;
-        color: #ef4444;
-        border: 2px solid #ef4444;
-    }
-    
-    .btn-reject:hover {
-        background: #ef4444;
-        color: white;
-    }
-</style>
-
 <div class="offers-container">
     <div class="page-header-orders">
         <h1>
@@ -209,34 +134,28 @@
                 <!-- Footer Actions -->
                 <div class="nego-footer">
                     <?php if ($nego['status'] == 'pending'): ?>
-                        <div class="action-group" style="width: 100%; justify-content: flex-end;">
-                            <!-- Accept -->
-                            <form action="<?= base_url('negotiation/accept/' . $nego['id']) ?>" method="post" style="display: inline;">
-                                <?= csrf_field() ?>
-                                <input type="hidden" name="message" value="Tawaran Anda diterima! Silakan lakukan checkout.">
-                                <button type="submit" class="btn-nego-action btn-accept" 
-                                        onclick="return confirm('Terima tawaran Rp <?= number_format($nego['offer_price'], 0, ',', '.') ?>?')">
-                                    <i class="bi bi-check-circle"></i>
-                                    <span>Terima</span>
-                                </button>
-                            </form>
-                            
-                            <!-- Counter -->
-                            <button class="btn-nego-action btn-counter" 
-                                    data-bs-toggle="modal" 
-                                    data-bs-target="#counterSellerModal<?= $nego['id'] ?>">
-                                <i class="bi bi-arrow-repeat"></i>
-                                <span>Tawar Balik</span>
-                            </button>
-                            
-                            <!-- Reject -->
-                            <button class="btn-nego-action btn-reject" 
-                                    data-bs-toggle="modal" 
-                                    data-bs-target="#rejectModal<?= $nego['id'] ?>">
-                                <i class="bi bi-x-circle"></i>
-                                <span>Tolak</span>
-                            </button>
-                        </div>
+                        <div class="action-group justify-content-end">
+                    <button class="btn btn-outline-danger" 
+                            data-bs-toggle="modal" 
+                            data-bs-target="#rejectModal<?= $nego['id'] ?>">
+                        <i class="bi bi-x-circle"></i> Tolak
+                    </button>
+
+                    <button class="btn btn-outline-primary" 
+                            data-bs-toggle="modal" 
+                            data-bs-target="#counterSellerModal<?= $nego['id'] ?>">
+                        <i class="bi bi-arrow-repeat"></i> Tawar Balik
+                    </button>
+
+                    <form action="<?= base_url('negotiation/accept/' . $nego['id']) ?>" method="post" class="m-0">
+                        <?= csrf_field() ?>
+                        <input type="hidden" name="message" value="Tawaran Anda diterima! Silakan lakukan checkout.">
+                        <button type="submit" class="btn btn-success btn-accept-custom" 
+                                onclick="return confirm('Terima tawaran Rp <?= number_format($nego['offer_price'], 0, ',', '.') ?>?')">
+                            <i class="bi bi-check-circle"></i> Terima
+                        </button>
+                    </form>
+                </div>
                     <?php else: ?>
                         <span style="color: #94a3b8; font-size: 14px;">
                             <?php

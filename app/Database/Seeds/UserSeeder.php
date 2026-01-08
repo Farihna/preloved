@@ -11,7 +11,7 @@ class UserSeeder extends Seeder
         $admin = [
             'username'     => 'admin123',
             'email'        => 'admin123@gmail.com',
-            'img_profile'  => 'no_profil.jpg',
+            'img_profile'  => 'no_profile.jpg',
             'hp'           => '081234567890',
             'password'     => password_hash('admin123', PASSWORD_DEFAULT),
             'role'         => 'admin',
@@ -21,7 +21,7 @@ class UserSeeder extends Seeder
         $user = [
             'username'     => 'user123',
             'email'        => 'user123@gmail.com',
-            'img_profile'  => 'no_profil.jpg',
+            'img_profile'  => 'no_profile.jpg',
             'hp'           => '081234567891',
             'password'     => password_hash('user123', PASSWORD_DEFAULT),
             'role'         => 'user',
