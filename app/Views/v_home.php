@@ -13,6 +13,66 @@
     <p class="hero-subtitle">Find amazing deals on quality second-hand items. Buy sustainable, save money, and give products a second life.</p>
 </div>
 
+<!-- Search Bar -->
+<form action="<?= base_url('/') ?>" method="get" class="search-bar">
+    <input type="text" name="search" class="search-input" 
+           placeholder="Cari produk..." 
+           value="<?= esc($searchKeyword) ?>">
+    <button type="submit" class="btn-search">
+        <i class="bi bi-search"></i> Cari
+    </button>
+</form>
+
+<!-- Category Filter -->
+<div class="category-filter">
+    <h3>
+        <i class="bi bi-grid-3x3-gap-fill"></i>
+        Kategori
+    </h3>
+    <div class="category-list">
+        <a href="<?= base_url('/') ?>" class="category-item <?= $activeCategory == 'all' ? 'active' : '' ?>">
+            <div class="category-icon">
+                <i class="bi bi-grid-fill"></i>
+            </div>
+            <div class="category-name">Semua</div>
+            <div class="category-count">
+                <?= count($product) ?> produk
+            </div>
+        </a>
+        
+        <?php foreach ($categories as $cat): ?>
+        <a href="<?= base_url('?category=' . $cat['slug']) ?>" 
+           class="category-item <?= $activeCategory == $cat['slug'] ? 'active' : '' ?>">
+            <div class="category-icon">
+                <i class="<?= $cat['icon'] ?? 'bi-tag' ?>"></i>
+            </div>
+            <div class="category-name"><?= esc($cat['name']) ?></div>
+            <div class="category-count">
+                <?= $cat['product_count'] ?> produk
+            </div>
+        </a>
+        <?php endforeach; ?>
+    </div>
+</div>
+
+<!-- Page Header -->
+<div class="page-header-custom">
+    <h2>
+        <?php if ($activeCategory != 'all'): ?>
+            <?php
+            $currentCat = array_filter($categories, fn($c) => $c['slug'] == $activeCategory);
+            $currentCat = reset($currentCat);
+            echo $currentCat ? esc($currentCat['name']) : 'Produk';
+            ?>
+        <?php elseif ($searchKeyword): ?>
+            Hasil Pencarian "<?= esc($searchKeyword) ?>"
+        <?php else: ?>
+            Semua Produk
+        <?php endif; ?>
+    </h2>
+    <span class="result-count"><?= count($product) ?> produk ditemukan</span>
+</div>
+
 <?php if (empty($product)): ?>
     <div class="empty-state">
         <i class="bi bi-inbox"></i>

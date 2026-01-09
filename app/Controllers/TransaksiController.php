@@ -76,19 +76,16 @@ class TransaksiController extends BaseController
                 return redirect()->to('/');
             }
             
-            // Check negotiation status
             if (!in_array($negotiation['status'], ['accepted', 'countered'])) {
                 session()->setFlashdata('failed', 'Negotiation is not approved');
                 return redirect()->to('/');
             }
             
-            // Check expiration
             if ($negotiation['expires_at'] && strtotime($negotiation['expires_at']) < time()) {
                 session()->setFlashdata('failed', 'Negotiation has expired');
                 return redirect()->to('/');
             }
             
-            // Set final price from negotiation
             if ($negotiation['status'] == 'accepted') {
                 $finalPrice = $negotiation['offer_price'];
             } else {
@@ -96,8 +93,8 @@ class TransaksiController extends BaseController
             }
         }
         
-        // Get user addresses
-        $addresses = $this->addressModel->getUserAddresses($buyerId);
+        // Get user addresses with full details
+        $addresses = $this->addressModel->getFullAddress($buyerId);
         
         $data = [
             'product' => $product,

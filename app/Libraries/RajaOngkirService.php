@@ -13,7 +13,7 @@ class RajaOngkirService
     public function __construct()
     {
         // Set your RajaOngkir API Key here or in .env file
-        $this->apiKey = getenv('RAJAONGKIR_API_KEY') ?: 'YOUR_API_KEY_HERE';
+        $this->apiKey = getenv('RAJAONGKIR_API_KEY') ?: 'EWrC9PKv62a8c0434e068d86e1UuePax';
         $this->baseUrl = 'https://api.rajaongkir.com/starter';
         $this->cacheModel = new RajaOngkirCacheModel();
     }

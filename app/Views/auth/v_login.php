@@ -35,7 +35,6 @@
     .login-header img {
         max-width: 200px;
         margin-bottom: 16px;
-        filter: brightness(0) invert(1);
     }
     
     .login-header h5 {

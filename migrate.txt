@@ -1,3 +1,4 @@
 php spark migrate
 php spark db:seed ProductSeeder
 php spark db:seed UserSeeder
+php spark db:seed RegionSeeder

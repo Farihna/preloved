@@ -6,6 +6,8 @@ use App\Models\ProductModel;
 use App\Models\TransactionModel;
 use App\Models\TransactionDetailModel;
 use App\Models\UserModel;
+use App\Models\CategoryModel;
+
 class Home extends BaseController
 {
     protected $product;
@@ -23,40 +25,49 @@ class Home extends BaseController
         $this->userModel = new UserModel();
     }
 
-    public function index(): string
-    {
-        $product = $this->product->findAll();
-        $data['product'] = $product;
-
-        $user_id = session()->get('user_id');
-        if ($user_id) {
-            $data['user_profile'] = $this->userModel->find($user_id);
-        } else {
-            $data['user_profile'] = ['img_profile' => 'no_profil.jpg', 'username' => 'Guest'];
-        }
-        if (session()->get('role') === 'admin') {
-            return view('admin/v_dashboard');
-        } else {
-            return view('v_home',$data);
-        }
-    }}
-/* }
-    // File: app/Controllers/Home.php
-
     public function index()
     {
-        $productModel = new \App\Models\ProductModel();
+        $productModel = new ProductModel();
+        $categoryModel = new CategoryModel();
         
-        // Get products with seller info
-        $product = $productModel->select('product.*, user.username, user.hp')
-                                ->join('user', 'user.id = product.id_user')
-                                ->where('product.status', 1)
-                                ->orderBy('product.created_at', 'DESC')
-                                ->findAll();
+        // Get category filter from query string
+        $categorySlug = $this->request->getGet('category');
+        $search = $this->request->getGet('search');
         
-        $data = ['product' => $product];
+        // Build query
+        $builder = $productModel->select('product.*, user.username, user.hp, categories.name as category_name, categories.icon as category_icon')
+                                ->join('user', 'user.id = product.id')
+                                ->join('categories', 'categories.id = product.category_id', 'left')
+                                ->where('product.status', 1);
         
-        return view('user/v_home', $data);
+        // Filter by category
+        if ($categorySlug) {
+            $category = $categoryModel->getCategoryBySlug($categorySlug);
+            if ($category) {
+                $builder->where('product.category_id', $category['id']);
+            }
+        }
+        
+        // Search filter
+        if ($search) {
+            $builder->groupStart()
+                    ->like('product.nama', $search)
+                    ->orLike('product.deskripsi', $search)
+                    ->groupEnd();
+        }
+        
+        $products = $builder->orderBy('product.created_at', 'DESC')->findAll();
+        
+        // Get all categories with count
+        $categories = $categoryModel->getCategoriesWithCount();
+        
+        $data = [
+            'product' => $products,
+            'categories' => $categories,
+            'activeCategory' => $categorySlug ?? 'all',
+            'searchKeyword' => $search ?? ''
+        ];
+        
+        return view('v_home', $data);
     }
 }
-*/

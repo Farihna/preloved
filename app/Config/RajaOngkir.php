@@ -6,7 +6,7 @@ use CodeIgniter\Config\BaseConfig;
 class RajaOngkir extends BaseConfig
 {
     // RajaOngkir API Key (get from https://rajaongkir.com)
-    public $apiKey = 'YOUR_API_KEY_HERE';
+    public $apiKey = 'EWrC9PKv62a8c0434e068d86e1UuePax';
     
     // API Type: starter, basic, or pro
     public $apiType = 'starter';
@@ -14,8 +14,6 @@ class RajaOngkir extends BaseConfig
     // Base URL based on API type
     public $baseUrls = [
         'starter' => 'https://api.rajaongkir.com/starter',
-        'basic' => 'https://api.rajaongkir.com/basic',
-        'pro' => 'https://pro.rajaongkir.com/api'
     ];
     
     // Available couriers for starter account

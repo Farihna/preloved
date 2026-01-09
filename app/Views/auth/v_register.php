@@ -35,7 +35,6 @@
     .register-header img {
         max-width: 180px;
         margin-bottom: 16px;
-        filter: brightness(0) invert(1);
     }
     
     .register-header h5 {

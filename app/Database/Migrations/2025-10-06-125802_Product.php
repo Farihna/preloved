@@ -20,6 +20,11 @@ class Product extends Migration
                 'constraint' => 11,
                 'unsigned' => TRUE,
             ],
+            'category_id' => [
+                'type'       => 'INT',
+                'constraint' => 11,
+                'unsigned'   => TRUE,
+            ],
             'nama' => [
                 'type' => 'VARCHAR',
                 'constraint' => 255,

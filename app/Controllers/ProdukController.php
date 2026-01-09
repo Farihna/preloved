@@ -3,167 +3,194 @@
 namespace App\Controllers;
 
 use App\Models\ProductModel;
+use App\Models\CategoryModel;
 use App\Models\UserModel;
 use Dompdf\Dompdf;
 
 class ProdukController extends BaseController
 {
-    protected $product; 
-    protected $user;
+    protected $productModel;
+    protected $categoryModel;
+    protected $userModel;
 
-    function __construct()
+    public function __construct()
     {
-        $this->user = new UserModel();
-        $this->product = new ProductModel();
+        $this->productModel = new ProductModel();
+        $this->categoryModel = new CategoryModel();
+        $this->userModel = new UserModel();
+        helper(['form', 'url']);
     }
 
+    /**
+     * Menampilkan daftar produk (Admin & User)
+     */
     public function index()
     {
-        if(session()->get('role') == 'user'){
-            $user_id = session()->get('user_id');
-            $product = $this->product->where('id_user', $user_id)->findAll();
-            $data['id_user'] = $user_id;
-            $data['product'] = $product;
-        }else{
-            $product = $this->product
-                    ->select('product.*, user.username') 
-                    ->join('user', 'user.id = product.id_user') 
-                    ->findAll();
-            $data['product'] = $product;
+        if (!session()->get('isLoggedIn')) { // Menggunakan key session Anda sebelumnya
+            return redirect()->to('/login');
         }
 
-        $user_id = session()->get('user_id');
-        if ($user_id) {
-            $data['user_profile'] = $this->user->find($user_id);
+        $userId = session()->get('user_id');
+        $role = session()->get('role');
+
+        // Logic pengambilan produk dengan join kategori
+        if ($role == 'admin') {
+            $products = $this->productModel
+                            ->select('product.*, user.username, categories.name as category_name')
+                            ->join('user', 'user.id = product.id_user')
+                            ->join('categories', 'categories.id = product.category_id', 'left')
+                            ->orderBy('product.created_at', 'DESC')
+                            ->findAll();
         } else {
-            $data['user_profile'] = ['img_profile' => 'no_profil.jpg', 'username' => 'Guest'];
+            $products = $this->productModel
+                            ->select('product.*, categories.name as category_name')
+                            ->join('categories', 'categories.id = product.category_id', 'left')
+                            ->where('product.id_user', $userId)
+                            ->orderBy('product.created_at', 'DESC')
+                            ->findAll();
         }
 
-        if (session()->get('role') === 'admin') {
+        // Ambil kategori aktif untuk dropdown di Modal tambah/edit
+        $categories = $this->categoryModel->where('is_active', 1)->findAll();
+
+        $data = [
+            'product' => $products,
+            'categories' => $categories,
+            'user_profile' => $this->userModel->find($userId)
+        ];
+
+        if ($role == 'admin') {
             return view('admin/v_produk', $data);
         } else {
             return view('v_produk', $data);
         }
-        return view('v_produk', $data);
     }
 
+    /**
+     * Simpan Produk Baru
+     */
     public function create()
     {
         $dataFoto = $this->request->getFile('foto');
-        $user_id = session()->get('user_id');
+        $userId = session()->get('user_id');
 
         $dataForm = [
-            'nama' => $this->request->getPost('nama'),
-            'harga' => $this->request->getPost('harga'),
-            'deskripsi' => $this->request->getPost('deskripsi'),
-            'status' => $this->request->getPost('status'),
-            'id_user' => $user_id,
-            'created_at' => date("Y-m-d H:i:s")
+            'id_user'       => $userId,
+            'category_id'   => $this->request->getPost('category_id'),
+            'nama'          => $this->request->getPost('nama'),
+            'harga'         => $this->request->getPost('harga'),
+            'deskripsi'     => $this->request->getPost('deskripsi'),
+            'status'        => $this->request->getPost('status') ?? 1,
+            'weight'        => $this->request->getPost('weight') ?? 500,
+            'is_negotiable' => $this->request->getPost('is_negotiable') ?? 1,
+            'created_at'    => date("Y-m-d H:i:s")
         ];
 
-        if ($dataFoto->isValid()) {
+        if ($dataFoto && $dataFoto->isValid()) {
             $fileName = $dataFoto->getRandomName();
             $dataForm['foto'] = $fileName;
             $dataFoto->move('img/', $fileName);
         }
 
-        $this->product->insert($dataForm);
+        $this->productModel->insert($dataForm);
+        return redirect()->to('produk')->with('success', 'Data Berhasil Ditambah');
+    }
 
-        return redirect('produk')->with('success', 'Data Berhasil Ditambah');
-    } 
-
+    /**
+     * Edit Produk
+     */
     public function edit($id)
     {
-        $dataProduk = $this->product->find($id);
+        $product = $this->productModel->find($id);
 
         $dataForm = [
-            'nama' => $this->request->getPost('nama'),
-            'harga' => $this->request->getPost('harga'),
-            'deskripsi' => $this->request->getPost('deskripsi'),
-            'status' => $this->request->getPost('status'),
-            'updated_at' => date("Y-m-d H:i:s")
+            'category_id'   => $this->request->getPost('category_id'),
+            'nama'          => $this->request->getPost('nama'),
+            'harga'         => $this->request->getPost('harga'),
+            'deskripsi'     => $this->request->getPost('deskripsi'),
+            'status'        => $this->request->getPost('status'),
+            'weight'        => $this->request->getPost('weight') ?? $product['weight'],
+            'is_negotiable' => $this->request->getPost('is_negotiable') ?? $product['is_negotiable'],
+            'updated_at'    => date("Y-m-d H:i:s")
         ];
 
         if ($this->request->getPost('check') == 1) {
-            if ($dataProduk['foto'] != '' and file_exists("img/" . $dataProduk['foto'] . "")) {
-                unlink("img/" . $dataProduk['foto']);
-            }
-
             $dataFoto = $this->request->getFile('foto');
-
-            if ($dataFoto->isValid()) {
+            if ($dataFoto && $dataFoto->isValid()) {
+                // Hapus foto lama
+                if ($product['foto'] && file_exists("img/" . $product['foto'])) {
+                    unlink("img/" . $product['foto']);
+                }
                 $fileName = $dataFoto->getRandomName();
                 $dataFoto->move('img/', $fileName);
                 $dataForm['foto'] = $fileName;
             }
         }
 
-        $this->product->update($id, $dataForm);
-
-        return redirect('produk')->with('success', 'Data Berhasil Diubah');
+        $this->productModel->update($id, $dataForm);
+        return redirect()->to('produk')->with('success', 'Data Berhasil Diubah');
     }
 
+    /**
+     * Hapus Produk
+     */
     public function delete($id)
     {
-        $dataProduk = $this->product->find($id);
+        $product = $this->productModel->find($id);
 
-        if ($dataProduk['foto'] != '' and file_exists("img/" . $dataProduk['foto'] . "")) {
-            unlink("img/" . $dataProduk['foto']);
+        if ($product['foto'] && file_exists("img/" . $product['foto'])) {
+            unlink("img/" . $product['foto']);
         }
 
-        $this->product->delete($id);
-
-        return redirect('produk')->with('success', 'Data Berhasil Dihapus');
+        $this->productModel->delete($id);
+        return redirect()->to('produk')->with('success', 'Data Berhasil Dihapus');
     }
 
+    /**
+     * Download PDF (Fitur Admin)
+     */
     public function download()
     {
-            //get data from database
-        $product = $this->product->findAll();
+        $product = $this->productModel
+                        ->select('product.*, categories.name as category_name')
+                        ->join('categories', 'categories.id = product.category_id', 'left')
+                        ->findAll();
 
-            //pass data to file view
         $html = view('admin/v_produkPDF', ['product' => $product]);
-
-            //set the pdf filename
         $filename = date('y-m-d-H-i-s') . '-produk';
 
-        // instantiate and use the dompdf class
         $dompdf = new Dompdf();
-
-        // load HTML content (file view)
         $dompdf->loadHtml($html);
-
-        // (optional) setup the paper size and orientation
-        $dompdf->setPaper('A4', 'potrait');
-
-        // render html as PDF
+        $dompdf->setPaper('A4', 'portrait');
         $dompdf->render();
-
-        // output the generated pdf
         $dompdf->stream($filename);
-    }   
+    }
 
-    // File: app/Controllers/Produk.php
-
-    // Tambahkan method detail
+    /**
+     * Detail Produk (Sisi User)
+     */
     public function detail($id)
     {
-        $productModel = new \App\Models\ProductModel();
-        $userModel = new \App\Models\UserModel();
-        
-        $product = $productModel->find($id);
-        
+        $product = $this->productModel
+                        ->select('product.*, categories.name as category_name, user.username, user.img_profile, user.hp')
+                        ->join('categories', 'categories.id = product.category_id', 'left')
+                        ->join('user', 'user.id = product.id_user')
+                        ->where('product.id', $id)
+                        ->first();
+
         if (!$product) {
             return redirect()->to('/')->with('failed', 'Product not found');
         }
-        
-        $seller = $userModel->find($product['id_user']);
-        
+
         $data = [
             'product' => $product,
-            'seller' => $seller
+            'seller' => [
+                'username' => $product['username'],
+                'img_profile' => $product['img_profile'],
+                'hp' => $product['hp']
+            ]
         ];
-        
+
         return view('v_product_detail', $data);
     }
 }

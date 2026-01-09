@@ -6,19 +6,36 @@ use App\Models\UserModel;
 
 use App\Controllers\BaseController;
 use CodeIgniter\HTTP\ResponseInterface;
+use App\Models\AddressModel;
+use App\Models\ProvinceModel;
+use App\Models\CityModel;
+use App\Models\DistrictModel;
+use App\Models\VillageModel;
+
+
 
 class ProfileController extends BaseController
 {
     protected $userModel;
+    protected $addressModel;
+    protected $provinceModel;
+    protected $cityModel;
+    protected $districtModel;
+    protected $villageModel;
+
 
     function __construct(){
         $this->userModel = new UserModel(); 
+        $this->addressModel = new AddressModel();
+        $this->provinceModel = new ProvinceModel();
+        $this->cityModel = new CityModel();
+        $this->districtModel = new DistrictModel();
+        $this->villageModel = new VillageModel();
     }
 
     public function index()
     {
         $user_id = session()->get('user_id');
-
         $profileData = $this->userModel->find($user_id);
         
         if (!$profileData) {
@@ -30,8 +47,18 @@ class ProfileController extends BaseController
             'username'    => $profileData['username'],
         ]);
 
-        $data['profile'] = $profileData;
+        // Ambil alamat user dengan join untuk mendapatkan nama wilayah
+        $addresses = $this->addressModel
+            ->select('addresses.*, provinces.name as province_name, cities.name as city_name, districts.name as district_name, villages.name as village_name')
+            ->join('provinces', 'provinces.id = addresses.province_id', 'left')
+            ->join('cities', 'cities.id = addresses.city_id', 'left')
+            ->join('districts', 'districts.id = addresses.district_id', 'left')
+            ->join('villages', 'villages.id = addresses.village_id', 'left')
+            ->where('addresses.user_id', $user_id)
+            ->findAll();
         
+        $data['profile'] = $profileData;
+        $data['addresses'] = $addresses;
 
         return view('v_profile', $data);
     }

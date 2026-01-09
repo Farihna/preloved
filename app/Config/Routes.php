@@ -71,10 +71,21 @@ $routes->group('', ['filter' => 'auth'], function($routes) {
     });
 });
 
-// ============================================
-// 3. API & INTEGRASI (Optional)
-// ============================================
 $routes->group('rajaongkir', function($routes) {
     $routes->get('provinces', 'RajaOngkirController::provinces');
     $routes->get('cities/(:num)', 'RajaOngkirController::cities/$1');
+    $routes->post('cost', 'RajaongkirController::cost');
+});
+
+$routes->group('address', function($routes) {
+    $routes->get('provinces', 'AddressController::getProvinces');
+    $routes->get('cities/(:num)', 'AddressController::getCities/$1');
+    $routes->get('districts/(:num)', 'AddressController::getDistricts/$1');
+    $routes->get('villages/(:num)', 'AddressController::getVillages/$1');
+    $routes->get('postal-code/(:num)', 'AddressController::getPostalCodeByVillage/$1');
+    $routes->post('store', 'AddressController::store');
+    $routes->get('edit/(:num)', 'AddressController::edit/$1');
+    $routes->post('update', 'AddressController::update');
+    $routes->post('set-default/(:num)', 'AddressController::setDefault/$1');
+    $routes->delete('delete/(:num)', 'AddressController::delete/$1');
 });
