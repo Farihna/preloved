@@ -9,6 +9,7 @@ use App\Models\TransactionDetailModel;
 use App\Models\ProductModel;
 use App\Models\NegotiationModel; 
 use App\Models\AddressModel;
+use App\Models\UserModel;
 use CodeIgniter\Controller;
 
 class TransaksiController extends BaseController
@@ -17,6 +18,7 @@ class TransaksiController extends BaseController
     protected $productModel;
     protected $negotiationModel;
     protected $addressModel;
+    protected $userModel;
     
     public function __construct()
     {
@@ -24,6 +26,7 @@ class TransaksiController extends BaseController
         $this->productModel = new ProductModel();
         $this->negotiationModel = new NegotiationModel();
         $this->addressModel = new AddressModel();
+        $this->userModel = new UserModel();
         helper(['form', 'url', 'number']);
     }
     
@@ -93,9 +96,14 @@ class TransaksiController extends BaseController
             }
         }
         
-        // Get user addresses with full details
-        $addresses = $this->addressModel->getFullAddress($buyerId);
-        
+        $addresses = $this->addressModel
+            ->select('addresses.*, provinces.name as province_name, cities.name as city_name, cities.type as city_type, districts.name as district_name, villages.name as village_name')
+            ->join('provinces', 'provinces.id = addresses.province_id', 'left')
+            ->join('cities', 'cities.id = addresses.city_id', 'left')
+            ->join('districts', 'districts.id = addresses.district_id', 'left')
+            ->join('villages', 'villages.id = addresses.village_id', 'left')
+            ->where('addresses.user_id', $buyerId)
+            ->findAll();        
         $data = [
             'product' => $product,
             'negotiation' => $negotiation,

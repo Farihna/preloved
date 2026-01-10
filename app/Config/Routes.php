@@ -72,9 +72,8 @@ $routes->group('', ['filter' => 'auth'], function($routes) {
 });
 
 $routes->group('rajaongkir', function($routes) {
-    $routes->get('provinces', 'RajaOngkirController::provinces');
-    $routes->get('cities/(:num)', 'RajaOngkirController::cities/$1');
-    $routes->post('cost', 'RajaongkirController::cost');
+    $routes->post('calculate-shipping', 'RajaOngkirController::calculateShipping');
+    $routes->get('search-destination', 'RajaOngkirController::searchDestination');
 });
 
 $routes->group('address', function($routes) {

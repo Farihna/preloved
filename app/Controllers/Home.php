@@ -21,7 +21,6 @@ class Home extends BaseController
         helper('number');
         $this->product = new ProductModel();
         $this->transaction = new TransactionModel;
-        $this->transaction_detail = new TransactionDetailModel;
         $this->userModel = new UserModel();
     }
 

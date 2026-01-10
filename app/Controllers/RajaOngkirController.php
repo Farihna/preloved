@@ -15,78 +15,56 @@ class RajaOngkirController extends BaseController
     }
     
     /**
-     * Get all provinces
-     * GET /rajaongkir/provinces
+     * Calculate shipping cost from district
+     * POST /rajaongkir/calculate-shipping
      */
-    public function provinces()
+    public function calculateShipping()
     {
-        $provinces = $this->rajaOngkir->getProvinces();
-        
-        if ($provinces) {
-            return $this->response->setJSON([
-                'success' => true,
-                'data' => $provinces
-            ]);
-        } else {
+        try {
+            $districtId = $this->request->getPost('district_id');
+            $weight = $this->request->getPost('weight') ?: 1000;
+            
+            if (!$districtId) {
+                return $this->response->setJSON(['success' => false, 'message' => 'District ID is required']);
+            }
+            
+            $result = $this->rajaOngkir->calculateMultipleCouriers($districtId, $weight);
+            return $this->response->setJSON($result);
+        } catch (\Exception $e) {
             return $this->response->setJSON([
                 'success' => false,
-                'message' => 'Failed to get provinces'
+                'message' => 'Terjadi kesalahan internal: ' . $e->getMessage()
             ]);
         }
     }
     
     /**
-     * Get cities by province
-     * GET /rajaongkir/cities/{province_id}
+     * Search domestic destination
+     * GET /rajaongkir/search-destination?query=xxx
      */
-    public function cities($provinceId = null)
+    public function searchDestination()
     {
-        $cities = $this->rajaOngkir->getCities($provinceId);
+        $query = $this->request->getGet('query');
         
-        if ($cities) {
+        if (!$query) {
+            return $this->response->setJSON([
+                'success' => false,
+                'message' => 'Query parameter is required'
+            ]);
+        }
+        
+        $result = $this->rajaOngkir->searchDomesticDestination($query, 10);
+        
+        if ($result) {
             return $this->response->setJSON([
                 'success' => true,
-                'data' => $cities
-            ]);
-        } else {
-            return $this->response->setJSON([
-                'success' => false,
-                'message' => 'Failed to get cities'
-            ]);
-        }
-    }
-    
-    /**
-     * Calculate shipping cost
-     * POST /rajaongkir/cost
-     */
-    public function cost()
-    {
-        $origin = $this->request->getPost('origin');
-        $destination = $this->request->getPost('destination');
-        $weight = $this->request->getPost('weight');
-        $courier = $this->request->getPost('courier');
-        
-        // Validation
-        if (!$origin || !$destination || !$weight || !$courier) {
-            return $this->response->setJSON([
-                'success' => false,
-                'message' => 'All parameters are required'
+                'data' => $result['data'] ?? []
             ]);
         }
         
-        $cost = $this->rajaOngkir->getCost($origin, $destination, $weight, $courier);
-        
-        if ($cost) {
-            return $this->response->setJSON([
-                'success' => true,
-                'data' => $cost
-            ]);
-        } else {
-            return $this->response->setJSON([
-                'success' => false,
-                'message' => 'Failed to calculate shipping cost'
-            ]);
-        }
+        return $this->response->setJSON([
+            'success' => false,
+            'message' => 'No results found'
+        ]);
     }
 }
