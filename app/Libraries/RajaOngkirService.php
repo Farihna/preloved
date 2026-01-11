@@ -10,7 +10,6 @@ class RajaOngkirService
     
     public function __construct()
     {
-        // Load config dari static method
         $config = RajaOngkirConfig::get();
         
         $this->apiKey = $config->apiKey;

@@ -78,11 +78,9 @@
                             </div>
                         <?php endforeach; ?>
                     <?php endif; ?>
-                <?php if (empty($addresses)): ?>
-                    <?php endif; ?>
-                    <button type="button" class="btn btn-outline-primary w-100 mb-3" data-bs-toggle="modal" data-bs-target="#addAddressModal">
+                    <a href="<?= base_url('profile') ?>" class="btn btn-outline-primary w-100 mb-3">
                         <i class="fas fa-plus me-2"></i>Tambah Alamat Baru
-                    </button>
+                    </a>
             </div>
 
             <!-- Shipping Method -->
@@ -429,8 +427,6 @@
             alert('Data alamat tidak lengkap. Pilih alamat lain atau edit alamat ini.');
             return;
         }
-        console.log('Loading couriers for district:', selectedAddress.districtId);
-        console.log('Product weight:', productWeight);
             
         document.getElementById('loadingOverlay').style.display = 'flex';
         document.getElementById('courierPlaceholder').style.display = 'none';
@@ -453,7 +449,6 @@
         .then(data => {
             document.getElementById('loadingOverlay').style.display = 'none';
 
-            console.log('Shipping response:', data);
 
             if (!data.success) {
                 document.getElementById('courierList').innerHTML = 
@@ -495,7 +490,6 @@
                 // Enable checkout button
                 document.getElementById('btnCheckout').disabled = false;
 
-                console.log('Auto-selected cheapest:', selectedCourier);
             }
         })
         .catch(error => {
@@ -706,11 +700,6 @@
         }
     });
 
-    /**
-     * ==========================================
-     * CRUD ALAMAT (TAMBAH & EDIT)
-     * ==========================================
-     */
 
     // Simpan Alamat Baru
     function submitAddress() {

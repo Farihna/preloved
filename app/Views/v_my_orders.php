@@ -111,16 +111,18 @@
                     </a>
                     
                     <?php if ($trx['status'] == 'pending'): ?>
-                    <a href="<?= base_url('transaction/detail/' . $trx['id']) ?>" class="btn-order-action btn-pay">
+                    <a href="<?= base_url('payment/page/' . $trx['id']) ?>" class="btn-order-action btn-pay">
                         <i class="bi bi-credit-card"></i>
                         <span>Bayar Sekarang</span>
                     </a>
-                    <a href="<?= base_url('transaction/cancel/' . $trx['id']) ?>" 
-                       class="btn-order-action btn-cancel"
-                       onclick="return confirm('Yakin batalkan pesanan ini?')">
-                        <i class="bi bi-x-circle"></i>
-                        <span>Batalkan</span>
-                    </a>
+                    <form action="<?= base_url('transaction/cancel/' . $trx['id']) ?>" method="post" style="display: inline;">
+                        <?= csrf_field() ?>
+                        <button type="submit" class="btn-order-action btn-cancel"
+                                onclick="return confirm('Yakin batalkan pesanan ini?')">
+                            <i class="bi bi-x-circle"></i>
+                            <span>Batalkan</span>
+                        </button>
+                    </form>
                     <?php elseif ($trx['status'] == 'shipped'): ?>
                     <a href="<?= base_url('transaction/complete/' . $trx['id']) ?>" 
                        class="btn-order-action btn-pay"

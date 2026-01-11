@@ -162,7 +162,6 @@
                 <?php if (!$isBuyer): ?>
                 <p>
                     <i class="bi bi-telephone"></i> 
-                    <?= esc($transaction['buyer_phone']) ?>
                 </p>
                 <?php endif; ?>
             </div>

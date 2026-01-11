@@ -6,9 +6,6 @@ use CodeIgniter\Router\RouteCollection;
  * @var RouteCollection $routes
  */
 
-// ============================================
-// 1. PUBLIC & AUTHENTICATION
-// ============================================
 $routes->get('/', 'Home::index');
 
 $routes->get('login', 'AuthController::login');
@@ -17,15 +14,10 @@ $routes->get('register', 'AuthController::register');
 $routes->post('register', 'AuthController::register');
 $routes->get('logout', 'AuthController::logout');
 
-// ============================================
-// 2. PROTECTED ROUTES (Hanya untuk User Login)
-// ============================================
 $routes->group('', ['filter' => 'auth'], function($routes) {
 
-    // --- DASHBOARD ---
     $routes->get('dashboard', 'DashboardController::index');
 
-    // --- PRODUK CRUD (User to User) ---
     $routes->group('produk', function($routes) {
         $routes->get('', 'ProdukController::index');
         $routes->post('', 'ProdukController::create');
@@ -35,13 +27,11 @@ $routes->group('', ['filter' => 'auth'], function($routes) {
         $routes->get('download', 'ProdukController::download'); // Untuk laporan/admin
     });
 
-    // --- PROFILE ---
     $routes->group('profile', function($routes) {
         $routes->get('', 'ProfileController::index');
         $routes->post('edit/(:num)', 'ProfileController::edit/$1');
     });
 
-    // --- NEGOTIATION (Fitur Tawar Menawar) ---
     $routes->group('negotiation', function($routes) {
         // Sisi Pembeli
         $routes->post('create', 'NegotiationController::create');
@@ -54,16 +44,16 @@ $routes->group('', ['filter' => 'auth'], function($routes) {
         $routes->post('reject/(:num)', 'NegotiationController::reject/$1');
     });
 
-    // --- TRANSACTION (Proses Jual Beli) ---
     $routes->group('transaction', function($routes) {
         $routes->get('checkout/(:num)', 'TransaksiController::checkout/$1');
         $routes->post('process', 'TransaksiController::process');
-        $routes->get('my-orders', 'TransaksiController::myOrders'); // Pembeli
-        $routes->get('my-sales', 'TransaksiController::mySales');   // Penjual
+        $routes->get('my-orders', 'TransaksiController::myOrders');
+        $routes->get('my-sales', 'TransaksiController::mySales');   
         $routes->post('payment-proof', 'TransaksiController::uploadPaymentProof');
+        $routes->get('detail/(:num)', 'TransaksiController::detail/$1');
+        $routes->post('cancel/(:num)', 'TransaksiController::cancel/$1');
     });
 
-    // --- ADMIN ONLY (Manage User) ---
     $routes->group('manage_user', function($routes) {
         $routes->get('', 'ManageUserController::index');
         $routes->post('edit/(:num)', 'ManageUserController::edit/$1');
@@ -88,3 +78,16 @@ $routes->group('address', function($routes) {
     $routes->post('set-default/(:num)', 'AddressController::setDefault/$1');
     $routes->delete('delete/(:num)', 'AddressController::delete/$1');
 });
+
+$routes->group('payment', function($routes) {
+    $routes->post('create-snap-token', 'PaymentController::createSnapToken');
+    $routes->post('midtrans/notification', 'PaymentController::midtransNotification');
+    $routes->get('finish', 'PaymentController::finish');
+    $routes->get('unfinish', 'PaymentController::unfinish');
+    $routes->get('error', 'PaymentController::error');
+    $routes->get('check-status/(:num)', 'PaymentController::checkStatus/$1');
+    $routes->get('page/(:num)', 'TransaksiController::paymentPage/$1');
+});
+
+$routes->get('wallet', 'WalletController::index');
+$routes->post('wallet/withdraw', 'WalletController::withdraw');

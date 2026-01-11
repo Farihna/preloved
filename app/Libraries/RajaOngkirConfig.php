@@ -7,7 +7,7 @@ class RajaOngkirConfig
     public static function get()
     {
         return (object)[
-            'apiKey' => 'EWrC9PKv62a8c0434e068d86e1UuePax',
+            'apiKey' => env('RAJAONGKIR_API_KEY'),
             'baseUrl' => 'https://rajaongkir.komerce.id/api/v1',
             'defaultOriginId' => '68372',
             'availableCouriers' => ['jne', 'tiki', 'jnt', 'sicepat', 'anteraja']

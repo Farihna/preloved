@@ -30,9 +30,7 @@
                 <?php
                 $totalRevenue = 0;
                 foreach ($transactions as $trx) {
-                    if (in_array($trx['status'], ['paid', 'processed', 'shipped', 'completed'])) {
-                        $totalRevenue += $trx['product_price'];
-                    }
+                    $totalRevenue += $trx['product_price'];
                 }
                 echo 'Rp ' . number_format($totalRevenue, 0, ',', '.');
                 ?>
@@ -48,7 +46,7 @@
                 <?php
                 $completedCount = 0;
                 foreach ($transactions as $trx) {
-                    if ($trx['status'] == 'completed') $completedCount++;
+                    if ($trx['status'] == 'pending') $completedCount++;
                 }
                 echo $completedCount;
                 ?>

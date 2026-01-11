@@ -1,16 +1,13 @@
 <?php
 
 namespace App\Controllers;
+use CodeIgniter\Controller;
 use App\Controllers\BaseController;
-// use CodeIgniter\HTTP\ResponseInterface;    
 use App\Models\TransactionModel;
-use App\Models\TransactionDetailModel;
-
 use App\Models\ProductModel;
 use App\Models\NegotiationModel; 
 use App\Models\AddressModel;
 use App\Models\UserModel;
-use CodeIgniter\Controller;
 
 class TransaksiController extends BaseController
 {
@@ -29,10 +26,6 @@ class TransaksiController extends BaseController
         $this->userModel = new UserModel();
         helper(['form', 'url', 'number']);
     }
-    
-    // ============================================
-    // CHECKOUT PROCESS
-    // ============================================
     
     /**
      * Checkout page
@@ -116,7 +109,6 @@ class TransaksiController extends BaseController
     
     /**
      * Process checkout
-     * POST /transaction/process
      */
     public function process()
     {
@@ -178,12 +170,12 @@ class TransaksiController extends BaseController
             'shipping_cost' => $shippingCost,
             'total_amount' => $totalAmount,
             'shipping_name' => $address['recipient_name'],
-            'shipping_phone' => $address['phone'],
-            'shipping_address' => $address['address'],
+            'shipping_phone' => $address['phone_number'],
+            'shipping_address' => $address['address_line'],
             'shipping_city_id' => $address['city_id'],
-            'shipping_city_name' => $address['city_name'],
+            'shipping_city_name' => $address['city'],
             'shipping_province' => $address['province'],
-            'shipping_postal_code' => $address['postal_code'],
+            'shipping_postal_code' => $address['zip_code'],
             'courier_code' => $courierCode,
             'courier_service' => $courierService,
             'courier_name' => $courierName,
@@ -195,14 +187,14 @@ class TransaksiController extends BaseController
         $transactionId = $this->transactionModel->insert($transactionData);
         
         if ($transactionId) {
-            // Update product status to pending (reserved)
-            $this->productModel->update($productId, ['status' => 0]);
+            // JANGAN UPDATE PRODUCT STATUS DI SINI
+            // Produk akan di-update status nya setelah pembayaran berhasil
             
             return $this->response->setJSON([
                 'success' => true,
                 'message' => 'Order created successfully!',
                 'transaction_id' => $transactionId,
-                'redirect' => base_url('transaction/detail/' . $transactionId)
+                'redirect' => base_url('payment/page/' . $transactionId)
             ]);
         } else {
             return $this->response->setJSON([
@@ -211,10 +203,6 @@ class TransaksiController extends BaseController
             ]);
         }
     }
-    
-    // ============================================
-    // BUYER - MY ORDERS
-    // ============================================
     
     /**
      * My orders page (buyer)
@@ -269,6 +257,42 @@ class TransaksiController extends BaseController
         return view('v_transaction_detail', $data);
     }
     
+    /**
+     * Payment page
+     * GET /payment/page/{transaction_id}
+     */
+    public function paymentPage($transactionId)
+    {
+        if (!session()->get('isLoggedIn')) {
+            session()->setFlashdata('failed', 'Please login first');
+            return redirect()->to('/login');
+        }
+        
+        $userId = session()->get('user_id');
+        $transaction = $this->transactionModel->getTransactionWithDetails($transactionId);
+        
+        if (!$transaction) {
+            session()->setFlashdata('failed', 'Transaction not found');
+            return redirect()->to('/');
+        }
+        
+        // Check authorization
+        if ($transaction['buyer_id'] != $userId) {
+            session()->setFlashdata('failed', 'Unauthorized access');
+            return redirect()->to('/');
+        }
+        
+        // Check if transaction is pending
+        if ($transaction['status'] != 'pending') {
+            session()->setFlashdata('failed', 'This transaction cannot be paid');
+            return redirect()->to('transaction/detail/' . $transactionId);
+        }
+        
+        $data = ['transaction' => $transaction];
+        
+        return view('v_payment', $data);
+    }
+
     /**
      * Upload payment proof
      * POST /transaction/payment-proof
@@ -364,16 +388,16 @@ class TransaksiController extends BaseController
             return redirect()->back();
         }
         
-        // Can only cancel if pending or paid
-        if (!in_array($transaction['status'], ['pending', 'paid'])) {
+        // Can only cancel if pending
+        if ($transaction['status'] != 'pending') {
             session()->setFlashdata('failed', 'Cannot cancel this transaction');
             return redirect()->back();
         }
         
         // Cancel transaction
         if ($this->transactionModel->updateStatus($id, 'cancelled', 'Cancelled by buyer')) {
-            // Return product status to available
-            $this->productModel->update($transaction['product_id'], ['status' => 1]);
+            // JANGAN return product status karena produk belum pernah di-reserve
+            // Product masih available karena statusnya tidak pernah diubah
             
             session()->setFlashdata('success', 'Transaction cancelled successfully');
         } else {
